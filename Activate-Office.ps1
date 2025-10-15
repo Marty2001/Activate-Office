@@ -1,6 +1,8 @@
 <#
 .SYNOPSIS
-    Page: https://www.facebook.com/DigitalNecessitiesBitCourse
+    Activates Microsoft Office using the Ohook activation method. This script is a PowerShell conversion of the original batch file.
+    Homepage: massgrave.dev
+    Email: mas.help@outlook.com
 .DESCRIPTION
     This script provides functionalities to install or uninstall Ohook activation.
     It performs necessary system checks, handles administrative elevation via a UAC prompt, and interacts with Windows licensing services.
@@ -124,25 +126,221 @@ function Test-RunningOfficeApps {
     return $true
 }
 
+# Function to detect Office installations
+function Get-OfficeInstallation {
+    $officeInstalls = @()
+    
+    # Check for Office 16.0 C2R
+    $o16c2r_paths = @(
+        "HKLM:\SOFTWARE\Microsoft\Office\ClickToRun",
+        "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Office\ClickToRun"
+    )
+    
+    foreach ($path in $o16c2r_paths) {
+        if (Test-Path $path) {
+            $installPath = (Get-ItemProperty -Path $path -Name InstallPath -ErrorAction SilentlyContinue).InstallPath
+            if ($installPath -and (Test-Path "$installPath\root\Licenses16\ProPlus*.xrm-ms")) {
+                $version = (Get-ItemProperty -Path "$path\Configuration" -Name VersionToReport -ErrorAction SilentlyContinue).VersionToReport
+                $platform = (Get-ItemProperty -Path "$path\Configuration" -Name Platform -ErrorAction SilentlyContinue).Platform
+                
+                $officeInstalls += [PSCustomObject]@{
+                    Version = "16.0"
+                    Type = "C2R"
+                    Path = "$installPath\root"
+                    VersionNumber = $version
+                    Architecture = $platform
+                    Registry = $path
+                }
+            }
+        }
+    }
+    
+    # Check for Office 15.0 C2R
+    $o15c2r_paths = @(
+        "HKLM:\SOFTWARE\Microsoft\Office\15.0\ClickToRun",
+        "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Office\15.0\ClickToRun"
+    )
+    
+    foreach ($path in $o15c2r_paths) {
+        if (Test-Path $path) {
+            $installPath = (Get-ItemProperty -Path $path -Name InstallPath -ErrorAction SilentlyContinue).InstallPath
+            if ($installPath -and (Test-Path "$installPath\root\Licenses\ProPlus*.xrm-ms")) {
+                $version = (Get-ItemProperty -Path "$path\Configuration" -Name VersionToReport -ErrorAction SilentlyContinue).VersionToReport
+                $platform = (Get-ItemProperty -Path "$path\Configuration" -Name Platform -ErrorAction SilentlyContinue).Platform
+                
+                $officeInstalls += [PSCustomObject]@{
+                    Version = "15.0"
+                    Type = "C2R"
+                    Path = "$installPath\root"
+                    VersionNumber = $version
+                    Architecture = $platform
+                    Registry = $path
+                }
+            }
+        }
+    }
+    
+    # Check for Office 16.0 MSI
+    $o16msi_paths = @(
+        "HKLM:\SOFTWARE\Microsoft\Office\16.0\Common\InstallRoot",
+        "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Office\16.0\Common\InstallRoot"
+    )
+    
+    foreach ($path in $o16msi_paths) {
+        if (Test-Path $path) {
+            $installPath = (Get-ItemProperty -Path $path -Name Path -ErrorAction SilentlyContinue).Path
+            if ($installPath -and (Test-Path "$installPath\*Picker.dll")) {
+                $officeInstalls += [PSCustomObject]@{
+                    Version = "16.0"
+                    Type = "MSI"
+                    Path = $installPath
+                    VersionNumber = "16.0"
+                    Architecture = if ($path -like "*Wow6432Node*") { "x86" } else { "x64" }
+                    Registry = $path -replace "\\Common\\InstallRoot", ""
+                }
+            }
+        }
+    }
+    
+    return $officeInstalls
+}
+
+# Function to download Ohook files from GitHub
+function Get-OhookFiles {
+    param([string]$Architecture)
+    
+    $tempPath = Join-Path $env:TEMP "Ohook"
+    if (-not (Test-Path $tempPath)) {
+        New-Item -ItemType Directory -Path $tempPath -Force | Out-Null
+    }
+    
+    $dllName = if ($Architecture -eq "x64") { "sppc64.dll" } else { "sppc32.dll" }
+    $dllPath = Join-Path $tempPath $dllName
+    
+    # Download from GitHub (you'll need to host these files)
+    $githubUrl = "https://raw.githubusercontent.com/massgravel/Microsoft-Activation-Scripts/master/BIN/$dllName"
+    
+    try {
+        Write-Host "Downloading $dllName..." -ForegroundColor DarkCyan
+        Invoke-WebRequest -Uri $githubUrl -OutFile $dllPath -UseBasicParsing -ErrorAction Stop
+        return $dllPath
+    }
+    catch {
+        Write-ColorText "Failed to download $dllName from GitHub: $_" "DarkRed"
+        return $null
+    }
+}
+
+# Function to install Ohook DLL
+function Install-OhookDLL {
+    param(
+        [string]$HookPath,
+        [string]$SppcPath,
+        [string]$Architecture
+    )
+    
+    try {
+        # Create symlink for sppcs.dll pointing to system sppc.dll
+        $sppcsPath = Join-Path $HookPath "sppcs.dll"
+        $sppcDllPath = Join-Path $HookPath "sppc.dll"
+        
+        # Remove old files if they exist
+        if (Test-Path $sppcsPath) { Remove-Item $sppcsPath -Force }
+        if (Test-Path $sppcDllPath) { Remove-Item $sppcDllPath -Force }
+        
+        # Create symbolic link
+        cmd /c mklink "$sppcsPath" "$SppcPath" 2>&1 | Out-Null
+        
+        if (-not (Test-Path $sppcsPath)) {
+            throw "Failed to create symbolic link"
+        }
+        
+        # Download and copy custom sppc.dll
+        $customDll = Get-OhookFiles -Architecture $Architecture
+        if (-not $customDll) {
+            throw "Failed to download custom DLL"
+        }
+        
+        Copy-Item $customDll $sppcDllPath -Force
+        
+        if (-not (Test-Path $sppcDllPath)) {
+            throw "Failed to copy custom DLL"
+        }
+        
+        Write-Host "Symlinking System's sppc.dll            [$sppcsPath] [Successful]" -ForegroundColor DarkGreen
+        Write-Host "Copying Custom sppc.dll                 [$sppcDllPath] [Successful]" -ForegroundColor DarkGreen
+        
+        return $true
+    }
+    catch {
+        Write-ColorText "Installing Ohook DLL Failed: $_" "DarkRed"
+        return $false
+    }
+}
+
 #============================================================================
-# Core Logic Functions (Placeholders)
-# Note: The actual activation logic from the batch file is highly complex.
-# These functions serve as placeholders for that logic.
+# Core Logic Functions
 #============================================================================
 
 function Install-OhookActivation {
-    Write-Host "Activating..." -ForegroundColor DarkCyan
+    Write-Host "Initializing Ohook installation..." -ForegroundColor DarkCyan
+    Write-Host ""
     
-    # Placeholder for the complex activation logic which would involve:
-    # 1. Finding Office installation paths (C2R, MSI).
-    # 2. Checking for supported Office versions.
-    # 3. Installing license files and registry keys.
-    # 4. Applying the 'hook' by modifying system files.
+    # Detect Office installations
+    $officeInstalls = Get-OfficeInstallation
     
-    # Simulating a process for demonstration
-    Write-Host "Applying activation..."
-    Start-Sleep -Seconds 2
-    Write-ColorText "Office is permanently activated." "DarkGreen"
+    if ($officeInstalls.Count -eq 0) {
+        Write-ColorText "No supported Office installation found." "DarkRed"
+        Write-ColorText "Supported versions: Office 2013, 2016, 2019, 2021, 2024 (C2R or MSI)" "DarkYellow"
+        Write-Host ""
+        Read-Host "Press Enter to continue"
+        return
+    }
+    
+    $activated = $false
+    
+    foreach ($office in $officeInstalls) {
+        Write-Host "Found Office $($office.Version) $($office.Type) [$($office.VersionNumber) | $($office.Architecture)]" -ForegroundColor DarkCyan
+        
+        # Determine hook path based on architecture and type
+        if ($office.Type -eq "C2R") {
+            if ($office.Architecture -eq "x64") {
+                $hookPath = Join-Path $office.Path "vfs\System"
+                $sppcPath = "$env:SystemRoot\System32\sppc.dll"
+            } else {
+                $hookPath = Join-Path $office.Path "vfs\SystemX86"
+                $sppcPath = "$env:SystemRoot\SysWOW64\sppc.dll"
+            }
+        } else {
+            # MSI installation
+            $hookPath = $office.Path
+            if ($office.Architecture -eq "x64") {
+                $sppcPath = "$env:SystemRoot\System32\sppc.dll"
+            } else {
+                $sppcPath = "$env:SystemRoot\SysWOW64\sppc.dll"
+            }
+        }
+        
+        # Install Ohook DLL
+        Write-Host "Installing Ohook to $hookPath..." -ForegroundColor DarkCyan
+        $result = Install-OhookDLL -HookPath $hookPath -SppcPath $sppcPath -Architecture $office.Architecture
+        
+        if ($result) {
+            $activated = $true
+            Write-ColorText "Office $($office.Version) activated successfully!" "DarkGreen"
+        } else {
+            Write-ColorText "Failed to activate Office $($office.Version)" "DarkRed"
+        }
+        
+        Write-Host ""
+    }
+    
+    if ($activated) {
+        Write-ColorText "Office is permanently activated." "DarkGreen"
+        Write-ColorText "For help, visit: $($mas)troubleshoot" "Black"
+    } else {
+        Write-ColorText "Activation failed. Please check the errors above." "DarkRed"
+    }
     
     Write-Host ""
     Read-Host "Press Enter to continue"
@@ -150,16 +348,56 @@ function Install-OhookActivation {
 
 function Uninstall-OhookActivation {
     Write-Host "Uninstalling Ohook activation..." -ForegroundColor DarkCyan
+    Write-Host ""
     
-    # Placeholder for the uninstallation logic which would involve:
-    # 1. Finding and deleting the hook files (e.g., sppc*.dll).
-    # 2. Restoring original system files if they were modified.
-    # 3. Removing related registry keys.
+    $removed = $false
     
-    # Simulating a process for demonstration
-    Write-Host "Removing activation files and registry keys..."
-    Start-Sleep -Seconds 2
-    Write-ColorText "Successfully uninstalled Ohook activation." "DarkGreen"
+    # Detect Office installations
+    $officeInstalls = Get-OfficeInstallation
+    
+    foreach ($office in $officeInstalls) {
+        # Determine hook path
+        if ($office.Type -eq "C2R") {
+            $hookPaths = @(
+                (Join-Path $office.Path "vfs\System"),
+                (Join-Path $office.Path "vfs\SystemX86")
+            )
+        } else {
+            $hookPaths = @($office.Path)
+        }
+        
+        foreach ($hookPath in $hookPaths) {
+            # Remove sppc*.dll files
+            $files = Get-ChildItem -Path $hookPath -Filter "sppc*.dll" -ErrorAction SilentlyContinue
+            
+            foreach ($file in $files) {
+                try {
+                    Remove-Item $file.FullName -Force
+                    Write-Host "Removed: $($file.FullName)" -ForegroundColor DarkGreen
+                    $removed = $true
+                }
+                catch {
+                    Write-ColorText "Failed to remove: $($file.FullName)" "DarkRed"
+                }
+            }
+        }
+    }
+    
+    # Remove registry keys
+    $kmskey = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform\0ff1ce15-a989-479d-af46-f275c6370663"
+    if (Test-Path $kmskey) {
+        Remove-Item $kmskey -Force -ErrorAction SilentlyContinue
+        Write-Host "Removed registry key for preventing non-genuine banner" -ForegroundColor DarkGreen
+        $removed = $true
+    }
+    
+    Write-Host ""
+    
+    if ($removed) {
+        Write-ColorText "Successfully uninstalled Ohook activation." "DarkGreen"
+    } else {
+        Write-ColorText "Ohook activation is not installed." "DarkYellow"
+    }
     
     Write-Host ""
     Read-Host "Press Enter to continue"
@@ -171,15 +409,17 @@ function Uninstall-OhookActivation {
 
 function Show-Menu {
     Clear-Host
-    Write-Host "============================================================" -ForegroundColor Black
-    Write-Host "                       BitCourse" -ForegroundColor DarkYellow
-    Write-Host "============================================================" -ForegroundColor Black
+    Write-Host "============================================================" -ForegroundColor DarkGreen
+    Write-Host "  Ohook Activation $masver (PowerShell Version)" -ForegroundColor Black
+    Write-Host "============================================================" -ForegroundColor DarkGreen
     Write-Host
-    Write-Host "         [1] Activate Microsoft Office"
-    Write-Host "         [2] Uninstall Activation"
+    Write-Host "         [1] Install Ohook Office Activation"
+    Write-Host "         [2] Uninstall Ohook"
+    Write-Host "         [3] Download Office"
+    Write-Host
     Write-Host "         [0] Exit"
     Write-Host
-    Write-Host
+    Write-Host "------------------------------------------------------------"
 }
 
 # --- Main Script Body ---
@@ -216,7 +456,7 @@ try {
             Write-Host
         }
         
-        $choice = Read-Host "Choose Option [1,2,0]"
+        $choice = Read-Host "Choose a menu option [1,2,3,0]"
         
         switch ($choice) {
             '1' {
@@ -257,11 +497,3 @@ finally {
     Write-Host "Press any key to close this window..." -ForegroundColor DarkCyan
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
 }
-
-
-
-
-
-
-
-
