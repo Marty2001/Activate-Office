@@ -131,7 +131,7 @@ function Test-RunningOfficeApps {
 #============================================================================
 
 function Install-OhookActivation {
-    Write-Host "Initializing Ohook installation..." -ForegroundColor DarkCyan
+    Write-Host "Activating..." -ForegroundColor DarkCyan
     
     # Placeholder for the complex activation logic which would involve:
     # 1. Finding Office installation paths (C2R, MSI).
@@ -143,7 +143,6 @@ function Install-OhookActivation {
     Write-Host "Applying activation..."
     Start-Sleep -Seconds 2
     Write-ColorText "Office is permanently activated." "DarkGreen"
-    Write-ColorText "For help, visit: $($mas)troubleshoot" "Black"
     
     Write-Host ""
     Read-Host "Press Enter to continue"
@@ -172,13 +171,12 @@ function Uninstall-OhookActivation {
 
 function Show-Menu {
     Clear-Host
-    Write-Host "============================================================" -ForegroundColor DarkGreen
-    Write-Host "  Ohook Activation $masver (PowerShell Version)" -ForegroundColor Black
-    Write-Host "============================================================" -ForegroundColor DarkGreen
+    Write-Host "============================================================" -ForegroundColor Black
+    Write-Host "                       BitCourse" -ForegroundColor DarkYellow
+    Write-Host "============================================================" -ForegroundColor Black
     Write-Host
-    Write-Host "         [1] Install Ohook Office Activation"
-    Write-Host "         [2] Uninstall Ohook"
-    Write-Host "         [3] Download Office"
+    Write-Host "         [1] Activate Microsoft Office"
+    Write-Host "         [2] Uninstall Activation"
     Write-Host
     Write-Host "         [0] Exit"
     Write-Host
@@ -219,7 +217,7 @@ try {
             Write-Host
         }
         
-        $choice = Read-Host "Choose a menu option [1,2,3,0]"
+        $choice = Read-Host "Choose Option [1,2,0]"
         
         switch ($choice) {
             '1' {
@@ -260,4 +258,5 @@ finally {
     Write-Host "Press any key to close this window..." -ForegroundColor DarkCyan
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
 }
+
 
