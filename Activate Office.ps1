@@ -38,16 +38,43 @@ if (-not $isAdmin) {
         }
         $allArgs = $params -join " "
 
-        # Re-launch PowerShell with elevated privileges and keep window open
-        Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -NoExit -File `"$PSCommandPath`" $allArgs" -Verb RunAs
+        # Check if running from irm|iex (no file path)
+        if ([string]::IsNullOrEmpty($PSCommandPath)) {
+            # Running from web (irm | iex), save to temp file first
+            Write-Host "Detected web execution. Creating temporary script file..." -ForegroundColor Yellow
+            
+            # Get the current script content
+            $scriptContent = $MyInvocation.MyCommand.ScriptBlock.ToString()
+            
+            # Create temp file path
+            $tempScript = Join-Path $env:TEMP "Ohook-Activation-$(Get-Random).ps1"
+            
+            # Save script to temp file
+            $scriptContent | Out-File -FilePath $tempScript -Encoding UTF8 -Force
+            
+            # Launch elevated from temp file with -NoExit to keep window open
+            $arguments = "-ExecutionPolicy Bypass -NoExit -Command `"& '$tempScript' $allArgs; Write-Host ''; Write-Host 'Press any key to exit...' -ForegroundColor Cyan; `$null = `$Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown'); Remove-Item '$tempScript' -Force -ErrorAction SilentlyContinue`""
+            Start-Process powershell.exe -ArgumentList $arguments -Verb RunAs
+        }
+        else {
+            # Running from a file, use normal elevation with -NoExit
+            $arguments = "-ExecutionPolicy Bypass -NoExit -Command `"& '$PSCommandPath' $allArgs; Write-Host ''; Write-Host 'Press any key to exit...' -ForegroundColor Cyan; `$null = `$Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')`""
+            Start-Process powershell.exe -ArgumentList $arguments -Verb RunAs
+        }
     }
     catch {
-        Write-Error "Failed to elevate privileges. Please right-click the script and 'Run as Administrator'."
+        Write-Error "Failed to elevate privileges. Error: $_"
         Read-Host "Press Enter to exit"
     }
     # Exit the current (non-elevated) script
     exit
 }
+
+# Banner to show script is running with admin rights
+Write-Host "============================================================" -ForegroundColor Green
+Write-Host "  Running with Administrator privileges" -ForegroundColor White
+Write-Host "============================================================" -ForegroundColor Green
+Write-Host ""
 
 #============================================================================
 # Initial Setup and Variables
@@ -94,7 +121,6 @@ function Test-RunningOfficeApps {
     }
     return $true
 }
-
 
 #============================================================================
 # Core Logic Functions (Placeholders)
