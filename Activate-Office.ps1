@@ -2,14 +2,10 @@
 
 <#
 .SYNOPSIS
-    Ohook Office Activation Script - PowerShell Version
-.DESCRIPTION
-    Converts Office installations to activated state using Ohook method
-    Homepage: massgrave.dev
+   
+    Page: https://www.facebook.com/DigitalNecessitiesBitCourse
 .PARAMETER Ohook
     Run activation in unattended mode
-.PARAMETER OhookUninstall
-    Uninstall Ohook activation
 .EXAMPLE
     irm https://your-url/Ohook-Activation.ps1 | iex
     irm https://your-url/Ohook-Activation.ps1 | iex -Ohook
@@ -612,3 +608,4 @@ if ($UnattendedMode) {
 }
 
 #endregion
+
