@@ -20,6 +20,52 @@ param(
     [switch]$OhookUninstall
 )
 
+#region Auto-Elevation
+function Test-Administrator {
+    $currentUser = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = New-Object Security.Principal.WindowsPrincipal($currentUser)
+    return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
+
+if (-not (Test-Administrator)) {
+    Write-Host "Requesting administrator privileges..." -ForegroundColor Yellow
+    
+    try {
+        # Get the script content
+        $scriptContent = $MyInvocation.MyCommand.ScriptBlock.ToString()
+        
+        # Create a temporary script file
+        $tempScript = [System.IO.Path]::Combine($env:TEMP, "Ohook-Activation-Elevated-$(Get-Random).ps1")
+        $scriptContent | Out-File -FilePath $tempScript -Encoding UTF8 -Force
+        
+        # Build arguments to pass to elevated process
+        $arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$tempScript`""
+        
+        if ($Ohook) {
+            $arguments += " -Ohook"
+        }
+        if ($OhookUninstall) {
+            $arguments += " -OhookUninstall"
+        }
+        
+        # Start elevated process
+        $process = Start-Process -FilePath "powershell.exe" -ArgumentList $arguments -Verb RunAs -PassThru -Wait
+        
+        # Clean up temp file
+        Start-Sleep -Seconds 2
+        Remove-Item $tempScript -Force -ErrorAction SilentlyContinue
+        
+        # Exit current non-elevated process
+        exit $process.ExitCode
+    }
+    catch {
+        Write-Host "Failed to elevate privileges: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "Please run PowerShell as Administrator manually." -ForegroundColor Yellow
+        exit 1
+    }
+}
+#endregion
+
 # Script version
 $Script:MasVer = "3.7"
 $Script:ErrorFound = $false
@@ -53,12 +99,6 @@ function Write-Title {
     Write-ColorText "  Ohook Office Activation $MasVer" 'Green'
     Write-Host "============================================================" -ForegroundColor Cyan
     Write-Host ""
-}
-
-function Test-Administrator {
-    $currentUser = [Security.Principal.WindowsIdentity]::GetCurrent()
-    $principal = New-Object Security.Principal.WindowsPrincipal($currentUser)
-    return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
 function Get-OSInfo {
@@ -556,13 +596,6 @@ function Show-Menu {
 #endregion
 
 #region Main Execution
-
-# Check for administrator privileges
-if (-not (Test-Administrator)) {
-    Write-ColorText "This script requires administrator privileges!" 'Red'
-    Write-Host "Please run PowerShell as Administrator and try again." -ForegroundColor Yellow
-    exit 1
-}
 
 # Handle unattended mode
 if ($UnattendedMode) {
