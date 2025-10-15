@@ -180,7 +180,6 @@ function Show-Menu {
     Write-Host
     Write-Host "         [0] Exit"
     Write-Host
-    Write-Host "------------------------------------------------------------"
 }
 
 # --- Main Script Body ---
@@ -258,6 +257,7 @@ finally {
     Write-Host "Press any key to close this window..." -ForegroundColor DarkCyan
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
 }
+
 
 
 
