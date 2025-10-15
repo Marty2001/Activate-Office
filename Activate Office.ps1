@@ -23,6 +23,12 @@ param(
 #============================================================================
 
 # Check if the script is running with Administrator privileges
+#============================================================================
+# UAC ELEVATION PROMPT (Corrected Version)
+# This section handles the User Account Control (UAC) prompt reliably.
+#============================================================================
+
+# Check if the script is running with Administrator privileges
 $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
 $principal = New-Object System.Security.Principal.WindowsPrincipal($identity)
 $isAdmin = $principal.IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -31,15 +37,19 @@ if (-not $isAdmin) {
     # If not running as admin, re-launch the script with elevated privileges
     Write-Warning "This script requires administrator rights. Requesting elevation..."
     try {
-        # Get all parameters passed to the script to forward them
-        $params = $PSBoundParameters.GetEnumerator() | ForEach-Object {
-            if ($_.Value -is [bool] -and $_.Value) { "-$($_.Key)" }
-            else { "-$($_.Key) `"$($_.Value)`"" }
-        }
-        $allArgs = $params -join " "
+        # Build the arguments for the new process.
+        # The -File parameter's value must be quoted if it contains spaces.
+        $arguments = @(
+            "-NoProfile",
+            "-File",
+            "'$($PSCommandPath)'" # Crucially, enclose the path in single quotes
+        )
 
-        # Re-launch PowerShell, telling it to run this script file with the same arguments
-        Start-Process powershell.exe -ArgumentList "-NoProfile -File `"$PSCommandPath`" $allArgs" -Verb RunAs -Wait
+        # Forward any original parameters (like -Ohook) to the new instance
+        $arguments += $psboundparameters.Keys | ForEach-Object { "-$_" }
+
+        # Re-launch PowerShell with the corrected arguments
+        Start-Process powershell.exe -ArgumentList $arguments -Verb RunAs -Wait
     }
     catch {
         Write-Error "Failed to elevate privileges. Please right-click the script and 'Run as Administrator'."
