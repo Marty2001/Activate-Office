@@ -172,7 +172,7 @@ function Uninstall-OhookActivation {
 function Show-Menu {
     Clear-Host
     Write-Host "============================================================" -ForegroundColor Black
-    Write-Host "                       BitCourse" -ForegroundColor DarkYellow
+    Write-Host "                       BitCourse" -ForegroundColor Yellow
     Write-Host "============================================================" -ForegroundColor Black
     Write-Host
     Write-Host "         [1] Activate Microsoft Office"
@@ -258,5 +258,6 @@ finally {
     Write-Host "Press any key to close this window..." -ForegroundColor DarkCyan
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
 }
+
 
 
