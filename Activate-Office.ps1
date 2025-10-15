@@ -2,10 +2,14 @@
 
 <#
 .SYNOPSIS
-   
-    Page: https://www.facebook.com/DigitalNecessitiesBitCourse
+    Ohook Office Activation Script - PowerShell Version
+.DESCRIPTION
+    Converts Office installations to activated state using Ohook method
+    Homepage: massgrave.dev
 .PARAMETER Ohook
     Run activation in unattended mode
+.PARAMETER OhookUninstall
+    Uninstall Ohook activation
 .EXAMPLE
     irm https://your-url/Ohook-Activation.ps1 | iex
     irm https://your-url/Ohook-Activation.ps1 | iex -Ohook
@@ -67,14 +71,18 @@ $Script:MasVer = "3.7"
 $Script:ErrorFound = $false
 $Script:UnattendedMode = $Ohook -or $OhookUninstall
 
+$host.UI.RawUI.BackgroundColor = "White"
+$host.UI.RawUI.ForegroundColor = "Black"
+Clear-Host
+
 # Color definitions
 $Script:Colors = @{
     Red = 'Red'
-    Green = 'Green'
-    Yellow = 'Yellow'
-    Blue = 'Cyan'
+    Green = 'DarkGreen'
+    Yellow = 'DarkYellow'
+    Blue = 'DarkCyan'
     Gray = 'DarkGray'
-    White = 'White'
+    White = 'Black'
 }
 
 #region Helper Functions
@@ -91,9 +99,9 @@ function Write-Title {
     param([string]$Title)
     Clear-Host
     Write-Host ""
-    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host "============================================================" -ForegroundColor DarkCyan
     Write-ColorText "  Ohook Office Activation $MasVer" 'Green'
-    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host "============================================================" -ForegroundColor DarkCyan
     Write-Host ""
 }
 
@@ -109,7 +117,7 @@ function Get-OSInfo {
         $fullBuild = $build
     }
     
-    Write-Host "OS: $($os.Caption) | Build: $fullBuild | Arch: $arch" -ForegroundColor Gray
+    Write-Host "OS: $($os.Caption) | Build: $fullBuild | Arch: $arch" -ForegroundColor DarkGray
 }
 
 function Get-OfficeInstallations {
@@ -382,7 +390,7 @@ function Invoke-OfficeActivation {
     )
     
     Write-Title
-    Write-Host "Starting Office Activation..." -ForegroundColor Cyan
+    Write-Host "Starting Office Activation..." -ForegroundColor DarkCyan
     Write-Host ""
     
     Get-OSInfo
@@ -392,7 +400,7 @@ function Invoke-OfficeActivation {
     
     # Process Office 16.0 C2R
     if ($Installations.O16C2R) {
-        Write-Host "Found Office 16.0 Click-to-Run installation" -ForegroundColor Green
+        Write-Host "Found Office 16.0 Click-to-Run installation" -ForegroundColor DarkGreen
         
         $regPath = $Installations.O16C2R
         $installPath = (Get-ItemProperty $regPath -Name InstallPath).InstallPath
@@ -400,7 +408,7 @@ function Invoke-OfficeActivation {
         $arch = (Get-ItemProperty $regPath -Name Platform -ErrorAction SilentlyContinue).Platform
         $version = (Get-ItemProperty "$regPath\Configuration" -Name VersionToReport -ErrorAction SilentlyContinue).VersionToReport
         
-        Write-Host "Version: $version | Architecture: $arch" -ForegroundColor Gray
+        Write-Host "Version: $version | Architecture: $arch" -ForegroundColor DarkGray
         
         # Determine hook path based on architecture
         if ($arch -eq 'x64') {
@@ -424,7 +432,7 @@ function Invoke-OfficeActivation {
         # Get installed products and install keys
         # This would query the actual installed products and install appropriate keys
         Write-Host ""
-        Write-Host "Installing product keys..." -ForegroundColor Yellow
+        Write-Host "Installing product keys..." -ForegroundColor DarkYellow
         
         # Example: Install a ProPlus key (in real implementation, detect actual products)
         $keyData = Get-ProductKeyData
@@ -436,36 +444,36 @@ function Invoke-OfficeActivation {
     
     # Process Office 15.0 C2R
     if ($Installations.O15C2R) {
-        Write-Host "Found Office 15.0 Click-to-Run installation" -ForegroundColor Green
+        Write-Host "Found Office 15.0 Click-to-Run installation" -ForegroundColor DarkGreen
         # Similar processing as O16C2R
     }
     
     # Process MSI installations
     foreach ($key in @('O16MSI', 'O15MSI', 'O14MSI')) {
         if ($Installations[$key]) {
-            Write-Host "Found Office $($key.Substring(1,2)).0 MSI installation" -ForegroundColor Green
+            Write-Host "Found Office $($key.Substring(1,2)).0 MSI installation" -ForegroundColor DarkGreen
             # Process MSI installation
         }
     }
     
     Write-Host ""
-    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host "============================================================" -ForegroundColor DarkCyan
     
     if ($activated -and -not $Script:ErrorFound) {
         Write-ColorText "Office is permanently activated!" 'Green'
-        Write-Host "Help: https://massgrave.dev/troubleshoot" -ForegroundColor Gray
+        Write-Host "Help: https://massgrave.dev/troubleshoot" -ForegroundColor DarkGray
     } else {
         Write-ColorText "Some errors were detected." 'Red'
-        Write-Host "Check this webpage for help: https://massgrave.dev/troubleshoot" -ForegroundColor Yellow
+        Write-Host "Check this webpage for help: https://massgrave.dev/troubleshoot" -ForegroundColor DarkYellow
     }
     
-    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host "============================================================" -ForegroundColor DarkCyan
     Write-Host ""
 }
 
 function Remove-OhookActivation {
     Write-Title
-    Write-Host "Uninstalling Ohook Activation..." -ForegroundColor Yellow
+    Write-Host "Uninstalling Ohook Activation..." -ForegroundColor DarkYellow
     Write-Host ""
     
     $installations = Get-OfficeInstallations
@@ -531,7 +539,7 @@ function Show-Menu {
         if (-not $hasOffice) {
             Write-ColorText "No Office installation detected!" 'Red'
             Write-Host ""
-            Write-Host "Please install Office first, then run this script again." -ForegroundColor Yellow
+            Write-Host "Please install Office first, then run this script again." -ForegroundColor DarkYellow
             Write-Host ""
             Write-Host "[0] Exit"
             Write-Host ""
@@ -541,14 +549,14 @@ function Show-Menu {
             continue
         }
         
-        Write-Host "Office installations detected:" -ForegroundColor Green
+        Write-Host "Office installations detected:" -ForegroundColor DarkGreen
         foreach ($key in $installations.Keys) {
             if ($installations[$key]) {
-                Write-Host "  - $key" -ForegroundColor Gray
+                Write-Host "  - $key" -ForegroundColor DarkGray
             }
         }
         Write-Host ""
-        Write-Host "============================================================" -ForegroundColor Cyan
+        Write-Host "============================================================" -ForegroundColor DarkCyan
         Write-Host ""
         Write-Host "[1] Install Ohook Office Activation"
         Write-Host ""
@@ -558,7 +566,7 @@ function Show-Menu {
         Write-Host ""
         Write-Host "[0] Exit"
         Write-Host ""
-        Write-Host "============================================================" -ForegroundColor Cyan
+        Write-Host "============================================================" -ForegroundColor DarkCyan
         Write-Host ""
         
         $choice = Read-Host "Choose an option [1,2,3,0]"
@@ -608,4 +616,3 @@ if ($UnattendedMode) {
 }
 
 #endregion
-
