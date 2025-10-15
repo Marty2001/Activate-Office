@@ -4,7 +4,7 @@
     Homepage: massgrave.dev
     Email: mas.help@outlook.com
 .DESCRIPTION
-    This script provides functionalities to install or uninstall Ohook Office Activation.
+    This script provides functionalities to install or uninstall Ohook activation.
     It performs necessary system checks, handles administrative elevation via a UAC prompt, and interacts with Windows licensing services.
 .PARAMETER Ohook
     A switch to activate Office with Ohook in unattended (silent) mode.
@@ -76,6 +76,10 @@ Write-Host "  Running with Administrator privileges" -ForegroundColor White
 Write-Host "============================================================" -ForegroundColor Green
 Write-Host ""
 
+$Host.UI.RawUI.BackgroundColor = "White"
+$Host.UI.RawUI.ForegroundColor = "Black"
+Clear-Host
+
 #============================================================================
 # Initial Setup and Variables
 #============================================================================
@@ -98,8 +102,8 @@ if ($Ohook.IsPresent -or $Ohook_Uninstall.IsPresent) {
 function Write-ColorText {
     param (
         [string]$Message,
-        [string]$ForegroundColor = "White",
-        [string]$BackgroundColor = "Black"
+        [string]$ForegroundColor = "Black",
+        [string]$BackgroundColor = "White"
     )
     Write-Host $Message -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor
 }
@@ -129,7 +133,7 @@ function Test-RunningOfficeApps {
 #============================================================================
 
 function Install-OhookActivation {
-    Write-Host "Initializing Ohook installation..." -ForegroundColor Cyan
+    Write-Host "Initializing Ohook installation..." -ForegroundColor DarkCyan
     
     # Placeholder for the complex activation logic which would involve:
     # 1. Finding Office installation paths (C2R, MSI).
@@ -140,15 +144,15 @@ function Install-OhookActivation {
     # Simulating a process for demonstration
     Write-Host "Applying activation..."
     Start-Sleep -Seconds 2
-    Write-ColorText "Office is permanently activated." "Green"
-    Write-ColorText "For help, visit: $($mas)troubleshoot" "White"
+    Write-ColorText "Office is permanently activated." "DarkGreen"
+    Write-ColorText "For help, visit: $($mas)troubleshoot" "Black"
     
     Write-Host ""
     Read-Host "Press Enter to continue"
 }
 
 function Uninstall-OhookActivation {
-    Write-Host "Uninstalling Ohook activation..." -ForegroundColor Cyan
+    Write-Host "Uninstalling Ohook activation..." -ForegroundColor DarkCyan
     
     # Placeholder for the uninstallation logic which would involve:
     # 1. Finding and deleting the hook files (e.g., sppc*.dll).
@@ -158,7 +162,7 @@ function Uninstall-OhookActivation {
     # Simulating a process for demonstration
     Write-Host "Removing activation files and registry keys..."
     Start-Sleep -Seconds 2
-    Write-ColorText "Successfully uninstalled Ohook activation." "Green"
+    Write-ColorText "Successfully uninstalled Ohook activation." "DarkGreen"
     
     Write-Host ""
     Read-Host "Press Enter to continue"
@@ -170,9 +174,9 @@ function Uninstall-OhookActivation {
 
 function Show-Menu {
     Clear-Host
-    Write-Host "============================================================" -ForegroundColor Green
-    Write-Host "  Ohook Activation $masver (PowerShell Version)" -ForegroundColor White
-    Write-Host "============================================================" -ForegroundColor Green
+    Write-Host "============================================================" -ForegroundColor DarkGreen
+    Write-Host "  Ohook Activation $masver (PowerShell Version)" -ForegroundColor Black
+    Write-Host "============================================================" -ForegroundColor DarkGreen
     Write-Host
     Write-Host "         [1] Install Ohook Office Activation"
     Write-Host "         [2] Uninstall Ohook"
@@ -245,16 +249,16 @@ try {
                 Start-Sleep -Seconds 1
             }
             default {
-                Write-ColorText "Invalid option. Please try again." "Red"
+                Write-ColorText "Invalid option. Please try again." "DarkRed"
                 Start-Sleep -Seconds 1
             }
         }
     } while ($choice -ne '0')
 
-    Write-Host "`nScript completed. You can now close this window." -ForegroundColor Green
+    Write-Host "`nScript completed. You can now close this window." -ForegroundColor DarkGreen
 }
 finally {
     Write-Host ""
-    Write-Host "Press any key to close this window..." -ForegroundColor Cyan
+    Write-Host "Press any key to close this window..." -ForegroundColor DarkCyan
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
 }
