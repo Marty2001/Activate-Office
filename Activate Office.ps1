@@ -52,14 +52,14 @@ if (-not $isAdmin) {
             # Save script to temp file
             $scriptContent | Out-File -FilePath $tempScript -Encoding UTF8 -Force
             
-            # Launch elevated from temp file with -NoExit to keep window open
-            $arguments = "-ExecutionPolicy Bypass -NoExit -Command `"& '$tempScript' $allArgs; Write-Host ''; Write-Host 'Press any key to exit...' -ForegroundColor Cyan; `$null = `$Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown'); Remove-Item '$tempScript' -Force -ErrorAction SilentlyContinue`""
-            Start-Process powershell.exe -ArgumentList $arguments -Verb RunAs
+            # Launch elevated with cmd /k to keep window open
+            $psCommand = "powershell.exe -ExecutionPolicy Bypass -NoProfile -File `"$tempScript`" $allArgs"
+            Start-Process cmd.exe -ArgumentList "/k", $psCommand -Verb RunAs
         }
         else {
-            # Running from a file, use normal elevation with -NoExit
-            $arguments = "-ExecutionPolicy Bypass -NoExit -Command `"& '$PSCommandPath' $allArgs; Write-Host ''; Write-Host 'Press any key to exit...' -ForegroundColor Cyan; `$null = `$Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')`""
-            Start-Process powershell.exe -ArgumentList $arguments -Verb RunAs
+            # Running from a file, use cmd /k to keep window open
+            $psCommand = "powershell.exe -ExecutionPolicy Bypass -NoProfile -File `"$PSCommandPath`" $allArgs"
+            Start-Process cmd.exe -ArgumentList "/k", $psCommand -Verb RunAs
         }
     }
     catch {
@@ -142,6 +142,9 @@ function Install-OhookActivation {
     Start-Sleep -Seconds 2
     Write-ColorText "Office is permanently activated." "Green"
     Write-ColorText "For help, visit: $($mas)troubleshoot" "White"
+    
+    Write-Host ""
+    Read-Host "Press Enter to continue"
 }
 
 function Uninstall-OhookActivation {
@@ -156,6 +159,9 @@ function Uninstall-OhookActivation {
     Write-Host "Removing activation files and registry keys..."
     Start-Sleep -Seconds 2
     Write-ColorText "Successfully uninstalled Ohook activation." "Green"
+    
+    Write-Host ""
+    Read-Host "Press Enter to continue"
 }
 
 #============================================================================
@@ -179,57 +185,76 @@ function Show-Menu {
 
 # --- Main Script Body ---
 
-# First, handle unattended execution if parameters were passed
-if ($unattended) {
-    if (-not (Test-RunningOfficeApps)) { exit 1 } # Exit with an error code if apps are running
-    
-    if ($Ohook.IsPresent) {
-        Install-OhookActivation
+try {
+    # First, handle unattended execution if parameters were passed
+    if ($unattended) {
+        if (-not (Test-RunningOfficeApps)) { 
+            Write-Host "Office applications are running. Please close them first." -ForegroundColor Red
+            Read-Host "Press Enter to exit"
+            exit 1 
+        }
+        
+        if ($Ohook.IsPresent) {
+            Install-OhookActivation
+        }
+        elseif ($Ohook_Uninstall.IsPresent) {
+            Uninstall-OhookActivation
+        }
+        
+        Write-Host ""
+        Write-Host "Operation completed." -ForegroundColor Green
+        Read-Host "Press Enter to exit"
+        exit 0
     }
-    elseif ($Ohook_Uninstall.IsPresent) {
-        Uninstall-OhookActivation
-    }
-    exit 0
+
+    # If not unattended, show the interactive menu
+    do {
+        Show-Menu
+        
+        # Check for running apps and display a warning if necessary
+        $appsRunning = -not (Test-RunningOfficeApps)
+        if ($appsRunning) {
+            Write-Host
+        }
+        
+        $choice = Read-Host "Choose a menu option [1,2,3,0]"
+        
+        switch ($choice) {
+            '1' {
+                if (-not $appsRunning) {
+                    Install-OhookActivation
+                }
+                else {
+                    Read-Host "Press Enter to return to the menu..."
+                }
+            }
+            '2' {
+                if (-not $appsRunning) {
+                    Uninstall-OhookActivation
+                }
+                else {
+                    Read-Host "Press Enter to return to the menu..."
+                }
+            }
+            '3' {
+                # Opens the link in the default web browser
+                Start-Process "$($mas)genuine-installation-media"
+            }
+            '0' {
+                Write-Host "Exiting."
+                Start-Sleep -Seconds 1
+            }
+            default {
+                Write-ColorText "Invalid option. Please try again." "Red"
+                Start-Sleep -Seconds 1
+            }
+        }
+    } while ($choice -ne '0')
+
+    Write-Host "`nScript completed. You can now close this window." -ForegroundColor Green
 }
-
-# If not unattended, show the interactive menu
-do {
-    Show-Menu
-    
-    # Check for running apps and display a warning if necessary
-    $appsRunning = -not (Test-RunningOfficeApps)
-    if ($appsRunning) {
-        Write-Host
-    }
-    
-    $choice = Read-Host "Choose a menu option [1,2,3,0]"
-    
-    switch ($choice) {
-        '1' {
-            if (-not $appsRunning) {
-                Install-OhookActivation
-            }
-            Read-Host "Press Enter to return to the menu..."
-        }
-        '2' {
-            if (-not $appsRunning) {
-                Uninstall-OhookActivation
-            }
-            Read-Host "Press Enter to return to the menu..."
-        }
-        '3' {
-            # Opens the link in the default web browser
-            Start-Process "$($mas)genuine-installation-media"
-        }
-        '0' {
-            Write-Host "Exiting."
-            Start-Sleep -Seconds 1
-        }
-        default {
-            Write-ColorText "Invalid option. Please try again." "Red"
-            Start-Sleep -Seconds 1
-        }
-    }
-} while ($choice -ne '0')
-
-Write-Host "`nScript completed. You can now close this window." -ForegroundColor Green
+finally {
+    Write-Host ""
+    Write-Host "Press any key to close this window..." -ForegroundColor Cyan
+    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
+}
