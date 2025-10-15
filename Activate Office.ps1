@@ -1,8 +1,6 @@
 <#
 .SYNOPSIS
-    Activates Microsoft Office using the Ohook activation method. This script is a PowerShell conversion of the original batch file.
-    Homepage: massgrave.dev
-    Email: mas.help@outlook.com
+    Page: https://www.facebook.com/DigitalNecessitiesBitCourse
 .DESCRIPTION
     This script provides functionalities to install or uninstall Ohook activation.
     It performs necessary system checks, handles administrative elevation via a UAC prompt, and interacts with Windows licensing services.
@@ -262,3 +260,4 @@ finally {
     Write-Host "Press any key to close this window..." -ForegroundColor DarkCyan
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
 }
+
