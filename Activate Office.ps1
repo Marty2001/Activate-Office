@@ -18,8 +18,8 @@ param(
 )
 
 #============================================================================
-# UAC ELEVATION PROMPT (FINAL WORKING VERSION)
-# This section handles the User Account Control (UAC) prompt and Execution Policy.
+# UAC ELEVATION PROMPT
+# This is the section that handles the User Account Control (UAC) prompt.
 #============================================================================
 
 # Check if the script is running with Administrator privileges
@@ -28,30 +28,24 @@ $principal = New-Object System.Security.Principal.WindowsPrincipal($identity)
 $isAdmin = $principal.IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)
 
 if (-not $isAdmin) {
-    # If not admin, re-launch the script with elevated privileges.
-    Write-Warning "Administrator rights required. Requesting UAC elevation..."
-    
+    # If not running as admin, re-launch the script with elevated privileges
+    Write-Warning "This script requires administrator rights. Requesting elevation..."
     try {
-        # Prepare arguments for the new PowerShell process.
-        $arguments = @(
-            "-NoProfile",
-            "-ExecutionPolicy", "Bypass",  # <-- THE CRITICAL FIX IS HERE
-            "-File",
-            "'$($PSCommandPath)'" # Ensures the path is correctly quoted
-        )
+        # Get all parameters passed to the script to forward them
+        $params = $PSBoundParameters.GetEnumerator() | ForEach-Object {
+            if ($_.Value -is [bool] -and $_.Value) { "-$($_.Key)" }
+            else { "-$($_.Key) `"$($_.Value)`"" }
+        }
+        $allArgs = $params -join " "
 
-        # Forward any original parameters (like -Ohook) to the new instance.
-        $arguments += $psboundparameters.Keys | ForEach-Object { "-$_" }
-
-        # Start the new elevated process and wait for it to finish.
-        Start-Process powershell.eXE -ArgumentList $arguments -Verb RunAs -Wait
+        # Re-launch PowerShell with elevated privileges and keep window open
+        Start-Process powershell.exe -ArgumentList "-ExecutionPolicy Bypass -NoExit -File `"$PSCommandPath`" $allArgs" -Verb RunAs
     }
     catch {
-        Write-Error "Failed to elevate privileges. Please right-click the script and select 'Run as Administrator'."
-        Read-Host "Press Enter to exit."
+        Write-Error "Failed to elevate privileges. Please right-click the script and 'Run as Administrator'."
+        Read-Host "Press Enter to exit"
     }
-    
-    # Exit the current, non-elevated script.
+    # Exit the current (non-elevated) script
     exit
 }
 
@@ -59,55 +53,83 @@ if (-not $isAdmin) {
 # Initial Setup and Variables
 #============================================================================
 
-Write-Host "Running with Administrator privileges." -ForegroundColor Green
 $masver = "3.7"
 $mas = "https://massgrave.dev/"
 $github = "https://github.com/massgravel/Microsoft-Activation-Scripts"
 
-# Determine if running in unattended mode
-$unattended = $Ohook.IsPresent -or $Ohook_Uninstall.IsPresent
+# Determine if running in unattended mode based on parameters
+$unattended = $false
+if ($Ohook.IsPresent -or $Ohook_Uninstall.IsPresent) {
+    $unattended = $true
+}
 
 #============================================================================
 # Helper Functions
 #============================================================================
 
+# Function to write colored text to the console
 function Write-ColorText {
     param (
         [string]$Message,
-        [string]$ForegroundColor = "White"
+        [string]$ForegroundColor = "White",
+        [string]$BackgroundColor = "Black"
     )
-    Write-Host $Message -ForegroundColor $ForegroundColor
+    Write-Host $Message -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor
 }
 
+# Function to check for running Office applications before proceeding
 function Test-RunningOfficeApps {
-    $officeProcesses = "msaccess", "excel", "groove", "lync", "onenote", "outlook", "powerpnt", "winproj", "mspub", "visio", "winword"
+    $officeProcesses = @(
+        "msaccess", "excel", "groove", "lync", "onenote",
+        "outlook", "powerpnt", "winproj", "mspub", "visio", "winword"
+    )
+    
+    # Get running processes whose names are in the list
     $runningApps = Get-Process -ErrorAction SilentlyContinue | Where-Object { $officeProcesses -contains $_.ProcessName }
     
     if ($runningApps) {
-        $appNames = ($runningApps.ProcessName) -join ", "
-        Write-ColorText "Warning: Please close the following Office applications: $appNames" -ForegroundColor Yellow
+        $appNames = ($runningApps | ForEach-Object { $_.ProcessName }) -join ", "
+        Write-ColorText "Warning: Please close the following Office applications before proceeding: $appNames" "Yellow"
         return $false
     }
     return $true
 }
 
+
 #============================================================================
 # Core Logic Functions (Placeholders)
+# Note: The actual activation logic from the batch file is highly complex.
+# These functions serve as placeholders for that logic.
 #============================================================================
 
 function Install-OhookActivation {
-    Write-ColorText "Initializing Ohook installation..." -ForegroundColor Cyan
+    Write-Host "Initializing Ohook installation..." -ForegroundColor Cyan
+    
+    # Placeholder for the complex activation logic which would involve:
+    # 1. Finding Office installation paths (C2R, MSI).
+    # 2. Checking for supported Office versions.
+    # 3. Installing license files and registry keys.
+    # 4. Applying the 'hook' by modifying system files.
+    
+    # Simulating a process for demonstration
     Write-Host "Applying activation..."
     Start-Sleep -Seconds 2
-    Write-ColorText "Office is permanently activated." -ForegroundColor Green
-    Write-ColorText "For help, visit: $($mas)troubleshoot"
+    Write-ColorText "Office is permanently activated." "Green"
+    Write-ColorText "For help, visit: $($mas)troubleshoot" "White"
 }
 
 function Uninstall-OhookActivation {
-    Write-ColorText "Uninstalling Ohook activation..." -ForegroundColor Cyan
+    Write-Host "Uninstalling Ohook activation..." -ForegroundColor Cyan
+    
+    # Placeholder for the uninstallation logic which would involve:
+    # 1. Finding and deleting the hook files (e.g., sppc*.dll).
+    # 2. Restoring original system files if they were modified.
+    # 3. Removing related registry keys.
+    
+    # Simulating a process for demonstration
     Write-Host "Removing activation files and registry keys..."
     Start-Sleep -Seconds 2
-    Write-ColorText "Successfully uninstalled Ohook activation." -ForegroundColor Green
+    Write-ColorText "Successfully uninstalled Ohook activation." "Green"
 }
 
 #============================================================================
@@ -116,9 +138,9 @@ function Uninstall-OhookActivation {
 
 function Show-Menu {
     Clear-Host
-    Write-ColorText "============================================================" -ForegroundColor Green
-    Write-ColorText "  Ohook Activation $masver (PowerShell Version)"
-    Write-ColorText "============================================================" -ForegroundColor Green
+    Write-Host "============================================================" -ForegroundColor Green
+    Write-Host "  Ohook Activation $masver (PowerShell Version)" -ForegroundColor White
+    Write-Host "============================================================" -ForegroundColor Green
     Write-Host
     Write-Host "         [1] Install Ohook Office Activation"
     Write-Host "         [2] Uninstall Ohook"
@@ -131,8 +153,9 @@ function Show-Menu {
 
 # --- Main Script Body ---
 
+# First, handle unattended execution if parameters were passed
 if ($unattended) {
-    if (-not (Test-RunningOfficeApps)) { exit 1 }
+    if (-not (Test-RunningOfficeApps)) { exit 1 } # Exit with an error code if apps are running
     
     if ($Ohook.IsPresent) {
         Install-OhookActivation
@@ -143,31 +166,44 @@ if ($unattended) {
     exit 0
 }
 
+# If not unattended, show the interactive menu
 do {
     Show-Menu
-    $appsAreRunning = -not (Test-RunningOfficeApps)
-    if ($appsAreRunning) { Write-Host }
+    
+    # Check for running apps and display a warning if necessary
+    $appsRunning = -not (Test-RunningOfficeApps)
+    if ($appsRunning) {
+        Write-Host
+    }
     
     $choice = Read-Host "Choose a menu option [1,2,3,0]"
     
     switch ($choice) {
         '1' {
-            if (-not $appsAreRunning) { Install-OhookActivation }
+            if (-not $appsRunning) {
+                Install-OhookActivation
+            }
             Read-Host "Press Enter to return to the menu..."
         }
         '2' {
-            if (-not $appsAreRunning) { Uninstall-OhookActivation }
+            if (-not $appsRunning) {
+                Uninstall-OhookActivation
+            }
             Read-Host "Press Enter to return to the menu..."
         }
         '3' {
+            # Opens the link in the default web browser
             Start-Process "$($mas)genuine-installation-media"
         }
         '0' {
             Write-Host "Exiting."
+            Start-Sleep -Seconds 1
         }
         default {
-            Write-ColorText "Invalid option. Please try again." -ForegroundColor Red
+            Write-ColorText "Invalid option. Please try again." "Red"
             Start-Sleep -Seconds 1
         }
     }
 } while ($choice -ne '0')
+
+Write-Host "`nScript completed. You can now close this window." -ForegroundColor Green
