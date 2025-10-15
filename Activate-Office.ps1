@@ -177,8 +177,8 @@ function Show-Menu {
     Write-Host
     Write-Host "         [1] Activate Microsoft Office"
     Write-Host "         [2] Uninstall Activation"
-    Write-Host
     Write-Host "         [0] Exit"
+    Write-Host
     Write-Host
 }
 
@@ -257,6 +257,7 @@ finally {
     Write-Host "Press any key to close this window..." -ForegroundColor DarkCyan
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
 }
+
 
 
 
