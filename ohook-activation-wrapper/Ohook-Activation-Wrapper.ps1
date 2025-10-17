@@ -87,7 +87,7 @@ if (-not $args) {
     }
 
     # To generate hash: (Get-FileHash -Path "Ohook_Activation_AIO.cmd" -Algorithm SHA256).Hash
-    $releaseHash = 'REPLACE_WITH_ACTUAL_SHA256_HASH'
+    $releaseHash = '7cf55447264e3dd4b5f00ff277fc39b823dcd6e7a168892e439b2d7e14179711'
     $stream = New-Object IO.MemoryStream
     $writer = New-Object IO.StreamWriter $stream
     $writer.Write($response)
