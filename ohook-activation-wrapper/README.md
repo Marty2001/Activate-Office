@@ -16,4 +16,4 @@ A secure PowerShell wrapper for executing Ohook_Activation_AIO.cmd with integrit
 ### Method 1: Direct Execution (Recommended)
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -Command "& { $(Invoke-RestMethod 'https://raw.githubusercontent.com/your-username/ohook-activation/main/Ohook-Activation-Wrapper.ps1') }"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "& { $(Invoke-RestMethod 'https://raw.githubusercontent.com/Marty2001/ohook-activation/main/Ohook-Activation-Wrapper.ps1') }"
