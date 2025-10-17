@@ -7,19 +7,19 @@ if (-not $args) {
     Clear-Host
     
     Write-Host ''
-    Write-Host 'Ohook Activation Wrapper' -ForegroundColor DarkBlue
+    Write-Host 'Activate MS Office' -ForegroundColor DarkBlue
     Write-Host 'Need help? Check the GitHub repository for documentation' -ForegroundColor DarkGray
     Write-Host ''
 }
 
 & {
     $psv = (Get-Host).Version.Major
-    $troubleshoot = 'https://github.com/Marty2001/ohook-activation/issues'
+    $troubleshoot = 'https://github.com/troubleshoot/ohook-activation/issues'
 
     if ($ExecutionContext.SessionState.LanguageMode.value__ -ne 0) {
         $ExecutionContext.SessionState.LanguageMode
         Write-Host "PowerShell is not running in Full Language Mode."
-        Write-Host "Help - https://github.com/Marty2001/ohook-activation#troubleshooting" -ForegroundColor Black -BackgroundColor Yellow
+        Write-Host "Help - https://github.com/Troubleshoot/ohook-activation#troubleshooting" -ForegroundColor Black -BackgroundColor Yellow
         return
     }
 
@@ -56,7 +56,7 @@ if (-not $args) {
     try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch {}
 
     $URLs = @(
-        'https://raw.githubusercontent.com/Marty2001/ohook-activation/main/Ohook_Activation_AIO.cmd',
+        'https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/ohook-activation-wrapper/Ohook_Activation_AIO.cmd',
         'https://cdn.jsdelivr.net/gh/Marty2001/ohook-activation@main/Ohook_Activation_AIO.cmd'
     )
     
