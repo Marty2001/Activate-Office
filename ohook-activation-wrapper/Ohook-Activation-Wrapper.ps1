@@ -10,12 +10,12 @@ if (-not $args) {
 
 & {
     $psv = (Get-Host).Version.Major
-    $troubleshoot = 'https://github.com/your-username/ohook-activation/issues'
+    $troubleshoot = 'https://github.com/Marty2001/ohook-activation/issues'
 
     if ($ExecutionContext.SessionState.LanguageMode.value__ -ne 0) {
         $ExecutionContext.SessionState.LanguageMode
         Write-Host "PowerShell is not running in Full Language Mode."
-        Write-Host "Help - https://github.com/your-username/ohook-activation#troubleshooting" -ForegroundColor White -BackgroundColor Blue
+        Write-Host "Help - https://github.com/Marty2001/ohook-activation#troubleshooting" -ForegroundColor White -BackgroundColor Blue
         return
     }
 
@@ -52,8 +52,8 @@ if (-not $args) {
     try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch {}
 
     $URLs = @(
-        'https://raw.githubusercontent.com/your-username/ohook-activation/main/Ohook_Activation_AIO.cmd',
-        'https://cdn.jsdelivr.net/gh/your-username/ohook-activation@main/Ohook_Activation_AIO.cmd'
+        'https://raw.githubusercontent.com/Marty2001/ohook-activation/main/Ohook_Activation_AIO.cmd',
+        'https://cdn.jsdelivr.net/gh/Marty2001/ohook-activation@main/Ohook_Activation_AIO.cmd'
     )
     
     Write-Progress -Activity "Downloading..." -Status "Please wait"
