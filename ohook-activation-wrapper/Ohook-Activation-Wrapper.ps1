@@ -2,9 +2,13 @@
 # Downloads and executes Ohook_Activation_AIO.cmd with integrity verification
 
 if (-not $args) {
+    [Console]::BackgroundColor = 'White'
+    [Console]::ForegroundColor = 'Black'
+    Clear-Host
+    
     Write-Host ''
-    Write-Host 'Ohook Activation Wrapper' -ForegroundColor Green
-    Write-Host 'Need help? Check the GitHub repository for documentation' -ForegroundColor Gray
+    Write-Host 'Ohook Activation Wrapper' -ForegroundColor DarkBlue
+    Write-Host 'Need help? Check the GitHub repository for documentation' -ForegroundColor DarkGray
     Write-Host ''
 }
 
@@ -15,7 +19,7 @@ if (-not $args) {
     if ($ExecutionContext.SessionState.LanguageMode.value__ -ne 0) {
         $ExecutionContext.SessionState.LanguageMode
         Write-Host "PowerShell is not running in Full Language Mode."
-        Write-Host "Help - https://github.com/Marty2001/ohook-activation#troubleshooting" -ForegroundColor White -BackgroundColor Blue
+        Write-Host "Help - https://github.com/Marty2001/ohook-activation#troubleshooting" -ForegroundColor Black -BackgroundColor Yellow
         return
     }
 
@@ -23,9 +27,9 @@ if (-not $args) {
         [void][System.AppDomain]::CurrentDomain.GetAssemblies(); [void][System.Math]::Sqrt(144)
     }
     catch {
-        Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "Error: $($_.Exception.Message)" -ForegroundColor DarkRed
         Write-Host "PowerShell failed to load .NET command."
-        Write-Host "Help - $troubleshoot" -ForegroundColor White -BackgroundColor Blue
+        Write-Host "Help - $troubleshoot" -ForegroundColor Black -BackgroundColor Yellow
         return
     }
 
@@ -34,7 +38,7 @@ if (-not $args) {
         $avList = & $cmd -Namespace root\SecurityCenter2 -Class AntiVirusProduct | Where-Object { $_.displayName -notlike '*windows*' } | Select-Object -ExpandProperty displayName
 
         if ($avList) {
-            Write-Host '3rd party Antivirus might be blocking the script - ' -ForegroundColor White -BackgroundColor Blue -NoNewline
+            Write-Host '3rd party Antivirus might be blocking the script - ' -ForegroundColor Black -BackgroundColor Yellow -NoNewline
             Write-Host " $($avList -join ', ')" -ForegroundColor DarkRed -BackgroundColor White
         }
     }
@@ -44,7 +48,7 @@ if (-not $args) {
         if (-not (Test-Path $FilePath)) {
             Check3rdAV
             Write-Host "Failed to create Ohook file in temp folder, aborting!"
-            Write-Host "Help - $troubleshoot" -ForegroundColor White -BackgroundColor Blue
+            Write-Host "Help - $troubleshoot" -ForegroundColor Black -BackgroundColor Yellow
             throw
         }
     }
@@ -52,7 +56,7 @@ if (-not $args) {
     try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch {}
 
     $URLs = @(
-        'https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/ohook-activation-wrapper/Ohook_Activation_AIO.cmd',
+        'https://raw.githubusercontent.com/Marty2001/ohook-activation/main/Ohook_Activation_AIO.cmd',
         'https://cdn.jsdelivr.net/gh/Marty2001/ohook-activation@main/Ohook_Activation_AIO.cmd'
     )
     
@@ -78,11 +82,11 @@ if (-not $args) {
     if (-not $response) {
         Check3rdAV
         foreach ($err in $errors) {
-            Write-Host "Error: $($err.Exception.Message)" -ForegroundColor Red
+            Write-Host "Error: $($err.Exception.Message)" -ForegroundColor DarkRed
         }
         Write-Host "Failed to retrieve Ohook_Activation_AIO.cmd from any of the available repositories, aborting!"
         Write-Host "Check if antivirus or firewall is blocking the connection."
-        Write-Host "Help - $troubleshoot" -ForegroundColor White -BackgroundColor Blue
+        Write-Host "Help - $troubleshoot" -ForegroundColor Black -BackgroundColor Yellow
         return
     }
 
