@@ -124,6 +124,9 @@ if (-not $args) {
         Write-Warning "cmd.exe is not working.`nReport this issue at $troubleshoot"
     }
 
+    [Console]::BackgroundColor = 'White'
+    [Console]::ForegroundColor = 'Black'
+
     if ($psv -lt 3) {
         if (Test-Path "$env:SystemRoot\Sysnative") {
             Write-Warning "Command is running with x86 Powershell, run it with x64 Powershell instead..."
