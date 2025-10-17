@@ -52,7 +52,7 @@ if (-not $args) {
     try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch {}
 
     $URLs = @(
-        'https://raw.githubusercontent.com/Marty2001/ohook-activation/main/Ohook_Activation_AIO.cmd',
+        'https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/ohook-activation-wrapper/Ohook_Activation_AIO.cmd',
         'https://cdn.jsdelivr.net/gh/Marty2001/ohook-activation@main/Ohook_Activation_AIO.cmd'
     )
     
