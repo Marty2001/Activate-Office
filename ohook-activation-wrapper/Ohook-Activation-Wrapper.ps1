@@ -10,12 +10,12 @@ if (-not $args) {
 
 & {
     $psv = (Get-Host).Version.Major
-    $troubleshoot = 'https://github.com/Marty2001/ohook-activation/issues'
+    $troubleshoot = 'https://github.com/troubleshoot/ohook-activation/issues'
 
     if ($ExecutionContext.SessionState.LanguageMode.value__ -ne 0) {
         $ExecutionContext.SessionState.LanguageMode
         Write-Host "PowerShell is not running in Full Language Mode."
-        Write-Host "Help - https://github.com/Marty2001/ohook-activation#troubleshooting" -ForegroundColor White -BackgroundColor Blue
+        Write-Host "Help - https://github.com/troubleshoot/ohook-activation#troubleshooting" -ForegroundColor White -BackgroundColor Blue
         return
     }
 
