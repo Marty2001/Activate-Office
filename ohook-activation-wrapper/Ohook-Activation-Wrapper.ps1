@@ -85,7 +85,7 @@ if (-not $args) {
         return
     }
 
-    $releaseHash = 'PLACEHOLDER_HASH_UPDATE_AFTER_GENERATION'
+    $releaseHash = '89cc8ce51f0069891f57058c67313212d6c516441eb1c4da4c657c95d33210b7'
     $stream = New-Object IO.MemoryStream
     $writer = New-Object IO.StreamWriter $stream
     $writer.Write($response)
