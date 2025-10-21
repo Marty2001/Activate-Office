@@ -1,19 +1,18 @@
-# Ohook Activation Wrapper
+# Ohook Activation AIO
 
-A secure PowerShell wrapper for executing Ohook_Activation_AIO.cmd with integrity verification and automatic cleanup.
+A PowerShell wrapper script that downloads and executes the Ohook Activation AIO CMD script with enhanced security checks and white background console styling.
 
 ## Features
 
-- ✅ SHA256 hash verification for security
-- ✅ Multiple mirror URLs for reliability
-- ✅ Automatic admin privilege elevation
-- ✅ Antivirus detection warnings
-- ✅ Automatic cleanup after execution
-- ✅ Support for both PowerShell v2 and v3+
+- **Secure Download**: Downloads from GitHub with multiple fallback URLs
+- **Integrity Verification**: SHA256 hash verification of downloaded scripts
+- **3rd Party AV Detection**: Checks for third-party antivirus that might block execution
+- **AutoRun Registry Check**: Detects problematic AutoRun registry entries
+- **White Console Theme**: All console popups use white background with black text
+- **Admin Privilege Check**: Automatically requests admin privileges when needed
 
 ## Usage
 
-### Method 1: Direct Execution (Recommended)
-
+### Method 1: Direct PowerShell Execution
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -Command "& { $(Invoke-RestMethod 'https://raw.githubusercontent.com/Marty2001/ohook-activation/main/Ohook-Activation-Wrapper.ps1') }"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "& { iwr -useb 'https://raw.githubusercontent.com/yourusername/ohook-activation-aio/main/Ohook_Activation_AIO.ps1' | iex }"

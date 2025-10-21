@@ -1,21 +1,21 @@
-# This script is hosted on GitHub for https://ohook.dev
-# Downloads and executes Ohook_Activation_AIO.cmd with integrity verification
+# This script is hosted on GitHub for Ohook Activation AIO
+# Method based on check3rd-av-ts pattern
 
 if (-not $args) {
     Write-Host ''
-    Write-Host 'Ohook Activation Wrapper' -ForegroundColor Green
-    Write-Host 'Need help? Check the GitHub repository for documentation' -ForegroundColor Gray
+    Write-Host 'Need help? Check the repository for documentation' -NoNewline
+    Write-Host ''
     Write-Host ''
 }
 
 & {
     $psv = (Get-Host).Version.Major
-    $troubleshoot = 'https://github.com/Marty2001/ohook-activation/issues'
+    $troubleshoot = 'https://github.com/yourusername/ohook-activation-aio/issues'
 
     if ($ExecutionContext.SessionState.LanguageMode.value__ -ne 0) {
         $ExecutionContext.SessionState.LanguageMode
         Write-Host "PowerShell is not running in Full Language Mode."
-        Write-Host "Help - https://github.com/Marty2001/ohook-activation#troubleshooting" -ForegroundColor White -BackgroundColor Blue
+        Write-Host "Help - $troubleshoot" -ForegroundColor White -BackgroundColor Blue
         return
     }
 
@@ -24,7 +24,7 @@ if (-not $args) {
     }
     catch {
         Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
-        Write-Host "PowerShell failed to load .NET command."
+        Write-Host "Powershell failed to load .NET command."
         Write-Host "Help - $troubleshoot" -ForegroundColor White -BackgroundColor Blue
         return
     }
@@ -43,7 +43,7 @@ if (-not $args) {
         param ([string]$FilePath)
         if (-not (Test-Path $FilePath)) {
             Check3rdAV
-            Write-Host "Failed to create Ohook file in temp folder, aborting!"
+            Write-Host "Failed to create Ohook Activation file in temp folder, aborting!"
             Write-Host "Help - $troubleshoot" -ForegroundColor White -BackgroundColor Blue
             throw
         }
@@ -52,10 +52,9 @@ if (-not $args) {
     try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch {}
 
     $URLs = @(
-        'https://raw.githubusercontent.com/Marty2001/ohook-activation/main/Ohook_Activation_AIO.cmd',
-        'https://cdn.jsdelivr.net/gh/Marty2001/ohook-activation@main/Ohook_Activation_AIO.cmd'
+        'https://raw.githubusercontent.com/yourusername/ohook-activation-aio/main/Ohook_Activation_AIO.cmd',
+        'https://github.com/yourusername/ohook-activation-aio/raw/main/Ohook_Activation_AIO.cmd'
     )
-    
     Write-Progress -Activity "Downloading..." -Status "Please wait"
     $errors = @()
     foreach ($URL in $URLs | Sort-Object { Get-Random }) {
@@ -80,14 +79,13 @@ if (-not $args) {
         foreach ($err in $errors) {
             Write-Host "Error: $($err.Exception.Message)" -ForegroundColor Red
         }
-        Write-Host "Failed to retrieve Ohook_Activation_AIO.cmd from any of the available repositories, aborting!"
+        Write-Host "Failed to retrieve Ohook Activation from any of the available repositories, aborting!"
         Write-Host "Check if antivirus or firewall is blocking the connection."
         Write-Host "Help - $troubleshoot" -ForegroundColor White -BackgroundColor Blue
         return
     }
 
-    # To generate hash: (Get-FileHash -Path "Ohook_Activation_AIO.cmd" -Algorithm SHA256).Hash
-    $releaseHash = '7cf55447264e3dd4b5f00ff277fc39b823dcd6e7a168892e439b2d7e14179711'
+    $releaseHash = 'PLACEHOLDER_HASH_UPDATE_AFTER_GENERATION'
     $stream = New-Object IO.MemoryStream
     $writer = New-Object IO.StreamWriter $stream
     $writer.Write($response)
@@ -95,7 +93,7 @@ if (-not $args) {
     $stream.Position = 0
     $hash = [BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($stream)) -replace '-'
     if ($hash -ne $releaseHash) {
-        Write-Warning "Hash ($hash) mismatch, aborting!`nReport this issue at $troubleshoot`nExpected: $releaseHash"
+        Write-Warning "Hash ($hash) mismatch, aborting!`nReport this issue at $troubleshoot"
         $response = $null
         return
     }
