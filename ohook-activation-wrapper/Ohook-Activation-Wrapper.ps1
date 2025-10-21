@@ -53,7 +53,7 @@ if (-not $args) {
 
     $URLs = @(
         'https://raw.githubusercontent.com/yourusername/ohook-activation-aio/main/Ohook_Activation_AIO.cmd',
-        'https://github.com/yourusername/ohook-activation-aio/raw/main/Ohook_Activation_AIO.cmd'
+        'https://github.com/Marty2001/Activate-Office/blob/main/ohook-activation-wrapper/Ohook_Activation_AIO.cmd'
     )
     Write-Progress -Activity "Downloading..." -Status "Please wait"
     $errors = @()
