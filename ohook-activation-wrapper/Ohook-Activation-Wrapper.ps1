@@ -10,7 +10,7 @@ if (-not $args) {
 
 & {
     $psv = (Get-Host).Version.Major
-    $troubleshoot = 'https://github.com/troubleshoot/ohook-activation-aio/issues'
+    $troubleshoot = 'https://github.com/yourusername/ohook-activation-aio/issues'
 
     if ($ExecutionContext.SessionState.LanguageMode.value__ -ne 0) {
         $ExecutionContext.SessionState.LanguageMode
@@ -52,8 +52,8 @@ if (-not $args) {
     try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch {}
 
     $URLs = @(
-        'https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/ohook-activation-wrapper/Ohook_Activation_AIO.cmd',
-        'https://github.com/Marty2001/Activate-Office/blob/main/ohook-activation-wrapper/Ohook_Activation_AIO.cmd'
+        'https://raw.githubusercontent.com/yourusername/ohook-activation-aio/main/Ohook_Activation_AIO.cmd',
+        'https://github.com/yourusername/ohook-activation-aio/raw/main/Ohook_Activation_AIO.cmd'
     )
     Write-Progress -Activity "Downloading..." -Status "Please wait"
     $errors = @()
@@ -85,7 +85,7 @@ if (-not $args) {
         return
     }
 
-    $releaseHash = '89cc8ce51f0069891f57058c67313212d6c516441eb1c4da4c657c95d33210b7'
+    $releaseHash = 'PLACEHOLDER_HASH_UPDATE_AFTER_GENERATION'
     $stream = New-Object IO.MemoryStream
     $writer = New-Object IO.StreamWriter $stream
     $writer.Write($response)
@@ -123,11 +123,11 @@ if (-not $args) {
             Write-Warning "Command is running with x86 Powershell, run it with x64 Powershell instead..."
             return
         }
-        $p = saps -FilePath $env:ComSpec -ArgumentList "/c """"$FilePath"" -el -qedit $args""" -Verb RunAs -PassThru
+        $p = & saps -FilePath $env:ComSpec -ArgumentList "/c `"$FilePath`"" -Verb RunAs -PassThru -WindowStyle Normal
         $p.WaitForExit()
     }
     else {
-        saps -FilePath $env:ComSpec -ArgumentList "/c """"$FilePath"" -el $args""" -Wait -Verb RunAs
+        & saps -FilePath $env:ComSpec -ArgumentList "/c `"$FilePath`"" -Verb RunAs -Wait -WindowStyle Normal
     }	
     CheckFile $FilePath
 
