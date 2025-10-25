@@ -14,7 +14,7 @@ if (-not $args) {
     if ($ExecutionContext.SessionState.LanguageMode.value__ -ne 0) {
         $ExecutionContext.SessionState.LanguageMode
         Write-Host "PowerShell is not running in Full Language Mode." -ForegroundColor Red
-        Write-Host "Help - https://github.com/troubleshoot" -ForegroundColor White -BackgroundColor Blue
+    
         return
     }
 
@@ -23,8 +23,7 @@ if (-not $args) {
     }
     catch {
         Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
-        Write-Host "PowerShell failed to load .NET command." -ForegroundColor Red
-        Write-Host "Help - https://github.com/wiki/troubleshoot" -ForegroundColor White -BackgroundColor Blue
+        Write-Host "PowerShell failed to load .NET command." -ForegroundColor Red    
         return
     }
 
@@ -43,7 +42,6 @@ if (-not $args) {
         if (-not (Test-Path $FilePath)) {
             Check3rdAV
             Write-Host "Failed to create BitCourse file in temp folder, aborting!"
-            Write-Host "Help - $troubleshoot" -ForegroundColor White -BackgroundColor Blue
             throw
         }
     }
@@ -81,7 +79,6 @@ if (-not $args) {
         }
         Write-Host "Failed to retrieve BitCourse script from any of the available repositories, aborting!"
         Write-Host "Check if antivirus or firewall is blocking the connection."
-        Write-Host "Help - $troubleshoot" -ForegroundColor White -BackgroundColor Blue
         return
     }
 
@@ -94,7 +91,7 @@ if (-not $args) {
     $stream.Position = 0
     $hash = [BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($stream)) -replace '-'
     if ($hash -ne $releaseHash) {
-        Write-Warning "Hash ($hash) mismatch, aborting!`nReport this issue at $troubleshoot"
+        Write-Warning "Hash ($hash) mismatch, aborting!"
         $response = $null
         return
     }
