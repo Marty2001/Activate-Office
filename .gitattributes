@@ -1,6 +1,1 @@
-# BitCourse Office Activation scripts
-BitCourse_Office_Activation.cmd -text
 
-# All scripts
-*.cmd -text
-*.bat -text
