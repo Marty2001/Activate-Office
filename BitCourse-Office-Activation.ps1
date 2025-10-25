@@ -91,7 +91,7 @@ if (-not $args) {
     }
 
     # Generate hash of your BitCourse_Office_Activation.cmd and replace this value
-    $releaseHash = 'REPLACE_WITH_YOUR_SHA256_HASH'
+    $releaseHash = '7D571615074ACABFF44F6A13B475363B0E0E4BCB0F709363A7D072A94EAC0B96'
     $stream = New-Object IO.MemoryStream
     $writer = New-Object IO.StreamWriter $stream
     $writer.Write($response)
