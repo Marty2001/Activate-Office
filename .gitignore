@@ -1,0 +1,23 @@
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sensitive files
+*.key
+*.pem
+secrets.txt
+
+# Build artifacts
+dist/
+build/
