@@ -3,8 +3,7 @@
 
 if (-not $args) {
     Write-Host ''
-    Write-Host 'BitCourse Office Activation Script' -ForegroundColor Green
-    Write-Host 'Usage: irm https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/BitCourse-Office-Activation.ps1 | iex' -ForegroundColor Cyan
+    Write-Host 'BitCourse - MS Office Activation' -ForegroundColor Green
     Write-Host ''
 }
 
