@@ -10,12 +10,12 @@ if (-not $args) {
 
 & {
     $psv = (Get-Host).Version.Major
-    $troubleshoot = 'https://github.com/[user]/[repo]/issues'
+    $troubleshoot = 'https://github.com/issues'
 
     if ($ExecutionContext.SessionState.LanguageMode.value__ -ne 0) {
         $ExecutionContext.SessionState.LanguageMode
         Write-Host "PowerShell is not running in Full Language Mode." -ForegroundColor Red
-        Write-Host "Help - https://github.com/[user]/[repo]/wiki/troubleshoot" -ForegroundColor White -BackgroundColor Blue
+        Write-Host "Help - https://github.com/troubleshoot" -ForegroundColor White -BackgroundColor Blue
         return
     }
 
