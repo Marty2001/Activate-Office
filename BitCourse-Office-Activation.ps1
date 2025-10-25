@@ -1,9 +1,9 @@
-# This script is hosted on GitHub for BitCourse Office Activation
-# Usage: irm https://raw.githubusercontent.com/[user]/[repo]/main/BitCourse-Office-Activation.ps1 | iex
+# Modified by: BitCourse https://web.facebook.com/DigitalNecessitiesBitCourse
+# Usage: irm https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/BitCourse-Office-Activation.ps1 | iex
 
 if (-not $args) {
     Write-Host ''
-    Write-Host 'BitCourse - MS Office Activation' -ForegroundColor Green
+    Write-Host 'BitCourse - MS Office Activation  https://web.facebook.com/DigitalNecessitiesBitCourse' -ForegroundColor Green
     Write-Host ''
 }
 
