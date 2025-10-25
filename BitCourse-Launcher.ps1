@@ -10,7 +10,7 @@ if (-not $args) {
 
 & {
     $psv = (Get-Host).Version.Major
-    $troubleshoot = 'https://github.com/bitcourseoffice/activation/issues'
+    $troubleshoot = 'https://github.com/bitcourse/activation/issues'
 
     if ($ExecutionContext.SessionState.LanguageMode.value__ -ne 0) {
         $ExecutionContext.SessionState.LanguageMode
@@ -87,7 +87,7 @@ if (-not $args) {
     }
 
     # Generate this hash by running: (Get-FileHash -Path "BitCourse_Office_Activation.cmd" -Algorithm SHA256).Hash
-    $releaseHash = 'REPLACE_WITH_ACTUAL_SHA256_HASH'
+    $releaseHash = '7D571615074ACABFF44F6A13B475363B0E0E4BCB0F709363A7D072A94EAC0B96'
     $stream = New-Object IO.MemoryStream
     $writer = New-Object IO.StreamWriter $stream
     $writer.Write($response)
