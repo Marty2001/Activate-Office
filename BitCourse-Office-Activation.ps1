@@ -1,20 +1,25 @@
-# Modified by: BitCourse https://web.facebook.com/DigitalNecessitiesBitCourse
-# Usage: irm https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/BitCourse-Office-Activation.ps1 | iex
+# This script is hosted on GitHub for BitCourse Office Activation
+# Usage: irm https://raw.githubusercontent.com/[user]/[repo]/main/BitCourse-Office-Activation.ps1 | iex
 
 if (-not $args) {
     Write-Host ''
-    Write-Host 'BitCourse - MS Office Activation  https://web.facebook.com/DigitalNecessitiesBitCourse' -ForegroundColor Green
+    Write-Host 'BitCourse Office Activation Script' -ForegroundColor Green
+    Write-Host 'Usage: irm https://raw.githubusercontent.com/[user]/[repo]/main/BitCourse-Office-Activation.ps1 | iex' -ForegroundColor Cyan
     Write-Host ''
 }
 
 & {
     $psv = (Get-Host).Version.Major
-    $troubleshoot = 'https://github.com/issues'
+    $troubleshoot = 'https://github.com/[user]/[repo]/issues'
+
+    $host.UI.RawUI.BackgroundColor = 'White'
+    $host.UI.RawUI.ForegroundColor = 'Black'
+    Clear-Host
 
     if ($ExecutionContext.SessionState.LanguageMode.value__ -ne 0) {
         $ExecutionContext.SessionState.LanguageMode
         Write-Host "PowerShell is not running in Full Language Mode." -ForegroundColor Red
-    
+        Write-Host "Help - https://github.com/[user]/[repo]/wiki/troubleshoot" -ForegroundColor White -BackgroundColor Blue
         return
     }
 
@@ -23,7 +28,8 @@ if (-not $args) {
     }
     catch {
         Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
-        Write-Host "PowerShell failed to load .NET command." -ForegroundColor Red    
+        Write-Host "PowerShell failed to load .NET command." -ForegroundColor Red
+        Write-Host "Help - https://github.com/[user]/[repo]/wiki/troubleshoot" -ForegroundColor White -BackgroundColor Blue
         return
     }
 
@@ -42,6 +48,7 @@ if (-not $args) {
         if (-not (Test-Path $FilePath)) {
             Check3rdAV
             Write-Host "Failed to create BitCourse file in temp folder, aborting!"
+            Write-Host "Help - $troubleshoot" -ForegroundColor White -BackgroundColor Blue
             throw
         }
     }
@@ -49,8 +56,8 @@ if (-not $args) {
     try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch {}
 
     $URLs = @(
-        'https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/BitCourse_Office_Activation.cmd',
-        'https://github.com/Marty2001/Activate-Office/blob/main/BitCourse_Office_Activation.cmd'
+        'https://raw.githubusercontent.com/[user]/[repo]/main/BitCourse_Office_Activation.cmd',
+        'https://github.com/[user]/[repo]/raw/main/BitCourse_Office_Activation.cmd'
     )
     
     Write-Progress -Activity "Downloading..." -Status "Please wait"
@@ -79,11 +86,12 @@ if (-not $args) {
         }
         Write-Host "Failed to retrieve BitCourse script from any of the available repositories, aborting!"
         Write-Host "Check if antivirus or firewall is blocking the connection."
+        Write-Host "Help - $troubleshoot" -ForegroundColor White -BackgroundColor Blue
         return
     }
 
     # Generate hash of your BitCourse_Office_Activation.cmd and replace this value
-    $releaseHash = '7D571615074ACABFF44F6A13B475363B0E0E4BCB0F709363A7D072A94EAC0B96'
+    $releaseHash = 'REPLACE_WITH_YOUR_SHA256_HASH'
     $stream = New-Object IO.MemoryStream
     $writer = New-Object IO.StreamWriter $stream
     $writer.Write($response)
@@ -91,7 +99,7 @@ if (-not $args) {
     $stream.Position = 0
     $hash = [BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($stream)) -replace '-'
     if ($hash -ne $releaseHash) {
-        Write-Warning "Hash ($hash) mismatch, aborting!"
+        Write-Warning "Hash ($hash) mismatch, aborting!`nReport this issue at $troubleshoot"
         $response = $null
         return
     }
