@@ -1,5 +1,5 @@
-# This script is hosted on GitHub for BitCourse Office Activation
-# Usage: irm https://raw.githubusercontent.com/[user]/[repo]/main/BitCourse-Office-Activation.ps1 | iex
+# Modified by: BitCourse https://web.facebook.com/DigitalNecessitiesBitCourse
+# Usage: irm https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/BitCourse-Office-Activation.ps1 | iex
 
 if (-not $args) {
     Write-Host ''
@@ -56,8 +56,8 @@ if (-not $args) {
     try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch {}
 
     $URLs = @(
-        'https://raw.githubusercontent.com/[user]/[repo]/main/BitCourse_Office_Activation.cmd',
-        'https://github.com/[user]/[repo]/raw/main/BitCourse_Office_Activation.cmd'
+        'https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/BitCourse_Office_Activation.cmd',
+        'https://github.com/Marty2001/Activate-Office/blob/main/BitCourse_Office_Activation.cmd'
     )
     
     Write-Progress -Activity "Downloading..." -Status "Please wait"
