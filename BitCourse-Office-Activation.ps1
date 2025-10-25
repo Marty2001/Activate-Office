@@ -4,7 +4,7 @@
 if (-not $args) {
     Write-Host ''
     Write-Host 'BitCourse Office Activation Script' -ForegroundColor Green
-    Write-Host 'Usage: irm https://raw.githubusercontent.com/[user]/[repo]/main/BitCourse-Office-Activation.ps1 | iex' -ForegroundColor Cyan
+    Write-Host 'Usage: irm https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/BitCourse-Office-Activation.ps1 | iex' -ForegroundColor Cyan
     Write-Host ''
 }
 
@@ -25,7 +25,7 @@ if (-not $args) {
     catch {
         Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
         Write-Host "PowerShell failed to load .NET command." -ForegroundColor Red
-        Write-Host "Help - https://github.com/[user]/[repo]/wiki/troubleshoot" -ForegroundColor White -BackgroundColor Blue
+        Write-Host "Help - https://github.com/wiki/troubleshoot" -ForegroundColor White -BackgroundColor Blue
         return
     }
 
