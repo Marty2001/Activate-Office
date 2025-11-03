@@ -6,7 +6,7 @@ $host.UI.RawUI.ForegroundColor = "Black"
 Clear-Host
 
 Write-Host ''
-Write-Host 'BitCourse-MS Office Activation https://web.facebook.com/DigitalNecessitiesBitCourse' -ForegroundColor DarkYellow
+Write-Host 'BitCourse - MS Office Activation     https://web.facebook.com/DigitalNecessitiesBitCourse' -ForegroundColor DarkYellow
 Write-Host ''
 
 & {
