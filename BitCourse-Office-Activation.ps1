@@ -119,4 +119,3 @@ Write-Host ''
     $FilePaths = @("$env:SystemRoot\Temp\BitCourse*.cmd", "$env:USERPROFILE\AppData\Local\Temp\BitCourse*.cmd")
     foreach ($FilePath in $FilePaths) { Get-Item $FilePath -ErrorAction SilentlyContinue | Remove-Item }
 } @args
-</merged_code
