@@ -11,7 +11,7 @@ Write-Host ''
 
     $host.UI.RawUI.BackgroundColor = 'White'
     $host.UI.RawUI.ForegroundColor = 'Black'
-    Clear-Host
+
 
     if ($ExecutionContext.SessionState.LanguageMode.value__ -ne 0) {
         $ExecutionContext.SessionState.LanguageMode
