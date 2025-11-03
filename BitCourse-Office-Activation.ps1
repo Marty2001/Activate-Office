@@ -1,11 +1,9 @@
 # Modified by: BitCourse https://web.facebook.com/DigitalNecessitiesBitCourse
 # Usage: irm https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/BitCourse-Office-Activation.ps1 | iex
 
-if (-not $args) {
-    Write-Host ''
-    Write-Host 'BitCourse-MS Office Activation https://web.facebook.com/DigitalNecessitiesBitCourse' -ForegroundColor Green
-    Write-Host ''
-}
+Write-Host ''
+Write-Host 'BitCourse-MS Office Activation https://web.facebook.com/DigitalNecessitiesBitCourse' -ForegroundColor Green
+Write-Host ''
 
 & {
     $psv = (Get-Host).Version.Major
@@ -121,3 +119,4 @@ if (-not $args) {
     $FilePaths = @("$env:SystemRoot\Temp\BitCourse*.cmd", "$env:USERPROFILE\AppData\Local\Temp\BitCourse*.cmd")
     foreach ($FilePath in $FilePaths) { Get-Item $FilePath -ErrorAction SilentlyContinue | Remove-Item }
 } @args
+</merged_code
