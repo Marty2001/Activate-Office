@@ -1,11 +1,9 @@
 # Modified by: BitCourse https://web.facebook.com/DigitalNecessitiesBitCourse
 # Usage: irm https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/BitCourse-Office-Activation.ps1 | iex
 
-if (-not $args) {
-    Write-Host ''
-    Write-Host 'BitCourse-MS Office Activation https://web.facebook.com/DigitalNecessitiesBitCourse' -ForegroundColor Green
-    Write-Host ''
-}
+Write-Host ''
+Write-Host 'BitCourse-MS Office Activation https://web.facebook.com/DigitalNecessitiesBitCourse' -ForegroundColor Green
+Write-Host ''
 
 & {
     $psv = (Get-Host).Version.Major
