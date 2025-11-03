@@ -53,7 +53,6 @@ Write-Host ''
 
     $URLs = @(
         'https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/BitCourse_Office_Activation.cmd',
-        'https://github.com/Marty2001/Activate-Office/blob/main/BitCourse_Office_Activation.cmd'
     )
     
     Write-Progress -Activity "Downloading..." -Status "Please wait"
