@@ -1,17 +1,19 @@
 # Modified by: BitCourse https://web.facebook.com/DigitalNecessitiesBitCourse
 # Usage: irm https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/BitCourse-Office-Activation.ps1 | iex
 
+$host.UI.RawUI.BackgroundColor = "White"
+$host.UI.RawUI.ForegroundColor = "Black"
+Clear-Host
+
 Write-Host ''
-Write-Host 'BitCourse-MS Office Activation https://web.facebook.com/DigitalNecessitiesBitCourse' -ForegroundColor Green
+Write-Host 'BitCourse-MS Office Activation https://web.facebook.com/DigitalNecessitiesBitCourse' -ForegroundColor DarkYellow
 Write-Host ''
 
 & {
     $psv = (Get-Host).Version.Major
     $troubleshoot = 'https://github.com/[user]/[repo]/issues'
 
-    $host.UI.RawUI.BackgroundColor = 'White'
-    $host.UI.RawUI.ForegroundColor = 'Black'
-
+  
 
     if ($ExecutionContext.SessionState.LanguageMode.value__ -ne 0) {
         $ExecutionContext.SessionState.LanguageMode
