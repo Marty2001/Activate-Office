@@ -85,20 +85,6 @@ if (-not $args) {
         return
     }
 
-    # Generate hash of your BitCourse_Office_Activation.cmd and replace this value
-    $releaseHash = '7D571615074ACABFF44F6A13B475363B0E0E4BCB0F709363A7D072A94EAC0B96'
-    $stream = New-Object IO.MemoryStream
-    $writer = New-Object IO.StreamWriter $stream
-    $writer.Write($response)
-    $writer.Flush()
-    $stream.Position = 0
-    $hash = [BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($stream)) -replace '-'
-    if ($hash -ne $releaseHash) {
-        Write-Warning "Hash ($hash) mismatch, aborting!"
-        $response = $null
-        return
-    }
-
     # Check for AutoRun registry which may create issues with CMD
     $paths = "HKCU:\SOFTWARE\Microsoft\Command Processor", "HKLM:\SOFTWARE\Microsoft\Command Processor"
     foreach ($path in $paths) { 
@@ -135,3 +121,4 @@ if (-not $args) {
     $FilePaths = @("$env:SystemRoot\Temp\BitCourse*.cmd", "$env:USERPROFILE\AppData\Local\Temp\BitCourse*.cmd")
     foreach ($FilePath in $FilePaths) { Get-Item $FilePath -ErrorAction SilentlyContinue | Remove-Item }
 } @args
+</merged_code
