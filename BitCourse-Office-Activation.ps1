@@ -52,7 +52,7 @@ Write-Host ''
     try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 } catch {}
 
     $URLs = @(
-        'https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/BitCourse_Office_Activation.cmd'
+        'https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/Ohook_Activation_AIO.cmd'
     )
     
     Write-Progress -Activity "Downloading..." -Status "Please wait"
