@@ -1,5 +1,5 @@
 # Modified by: BitCourse https://web.facebook.com/DigitalNecessitiesBitCourse
-# Usage: irm https://raw.githubusercontent.com/Marty2001/Activate-Office/refs/heads/main/BitCourse-Office-Activation.ps1 | iex
+# Purpose: To Activate MS Office applications
 
 $host.UI.RawUI.BackgroundColor = "White"
 $host.UI.RawUI.ForegroundColor = "Black"
