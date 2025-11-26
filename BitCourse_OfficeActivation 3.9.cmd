@@ -138,8 +138,8 @@ popd
 ::========================================================================================================================================
 
 cls
-color 07
-title  Ohook Activation %masver%
+color F0
+title  BitCourse - Digital Neccessities %masver%
 
 set _args=
 set _elev=
@@ -420,7 +420,7 @@ if %_rem%==1 goto :oh_uninstall
 if %_unattended%==0 (
 cls
 if not defined terminal mode 76, 25
-title  Ohook Activation %masver%
+title  BitCourse - Digital Neccessities %masver%
 call :oh_checkapps
 echo:
 echo:
@@ -459,7 +459,7 @@ mode 140, 32
 if exist "%SysPath%\spp\store_test\" mode 140, 32
 %psc% "&{$W=$Host.UI.RawUI.WindowSize;$B=$Host.UI.RawUI.BufferSize;$W.Height=32;$B.Height=300;$Host.UI.RawUI.WindowSize=$W;$Host.UI.RawUI.BufferSize=$B;}" %nul%
 )
-title  Ohook Activation %masver%
+title  BitCourse - Digital Neccessities %masver%
 
 echo:
 echo Initializing...
