@@ -5,7 +5,7 @@
 
 ::============================================================================
 ::
-::   Homepage: mass{}grave{dot}dev
+::   Homepage: BitCourse
 ::
 ::============================================================================
 
@@ -169,7 +169,7 @@ echo Failed to detect Windows build number.
 echo:
 setlocal EnableDelayedExpansion
 set fixes=%fixes% %mas%troubleshoot
-call :dk_color2 %Blue% "Check this webpage for help - " %_Yellow% " %mas%troubleshoot"
+call :dk_color2 %Blue% "Check this webpage for help - " %_Yellow% " troubleshoot"
 goto dk_done
 )
 
@@ -271,7 +271,7 @@ echo FullLanguage mode not found in PowerShell. Aborting...
 echo If you have applied restrictions on Powershell then undo those changes.
 echo:
 set fixes=%fixes% %mas%fix_powershell
-call :dk_color2 %Blue% "Check this webpage for help - " %_Yellow% " %mas%fix_powershell"
+call :dk_color2 %Blue% "Check this webpage for help - " %_Yellow% " fix_powershell"
 goto dk_done
 )
 
@@ -474,7 +474,7 @@ call :dk_color %Blue% "Go back to Main Menu, select Troubleshoot and run DISM Re
 call :dk_color %Blue% "After that, restart system and try activation again."
 echo:
 set fixes=%fixes% %mas%in-place_repair_upgrade
-call :dk_color2 %Blue% "If it still shows the same error, do this - " %_Yellow% " %mas%in-place_repair_upgrade"
+call :dk_color2 %Blue% "If it still shows the same error, do this - " %_Yellow% " in-place_repair_upgrade"
 )
 goto dk_done
 )
@@ -577,7 +577,7 @@ echo:
 call :dk_color %Blue% "Download and install Office from the below URL and then try again."
 echo:
 set fixes=%fixes% %mas%genuine-installation-media
-call :dk_color %_Yellow% "%mas%genuine-installation-media"
+call :dk_color %_Yellow% genuine-installation-media"
 goto dk_done
 )
 
@@ -766,13 +766,12 @@ echo:
 if not defined error (
 call :dk_color %Green% "Office is permanently activated."
 if defined ohub call :dk_color %Gray% "Office apps such as Word, Excel are activated, use them directly. Ignore 'Buy' button in Office dashboard app."
-echo Help: %mas%troubleshoot
 ) else (
 call :dk_color %Red% "Some errors were detected."
 if not defined ierror if not defined showfix call :dk_color %Blue% "%_fixmsg%"
 echo:
 set fixes=%fixes% %mas%troubleshoot
-call :dk_color2 %Blue% "Check this webpage for help - " %_Yellow% " %mas%troubleshoot"
+call :dk_color2 %Blue% "Check this webpage for help - " %_Yellow% " troubleshoot"
 )
 
 goto :dk_done
@@ -1342,7 +1341,6 @@ set error=1
 call :dk_color %Red% "Checking Product In Script              [Office %oVer%.0 !_prod! key not found in script]"
 call :dk_color %Blue% "Make sure you are using the latest version of MAS."
 set fixes=%fixes% %mas%
-call :dk_color %_Yellow% "%mas%"
 )
 )
 
@@ -1515,7 +1513,7 @@ echo:
 call :dk_color %Gray% "The logged-in Office account has a subscription license."
 call :dk_color %Blue% "If the subscription is active, it overrides other activation methods."
 call :dk_color %Blue% "If it is expiring soon, rerun the activation script after it expires."
-call :dk_color2 %Blue% "If it has already expired and activation fails, get help here - " %_Yellow% " %mas%troubleshoot"
+call :dk_color2 %Blue% "If it has already expired and activation fails, get help here - " %_Yellow% " troubleshoot"
 echo:
 )
 
