@@ -424,9 +424,7 @@ title  BitCourse - Digital Neccessities %masver%
 call :oh_checkapps
 echo:
 echo:
-echo:
-echo:
-if defined checknames (call :dk_color %_Yellow% "                Close [!checknames!] before proceeding...")
+if defined checknames (echo          Close [!checknames!] before proceeding...)
 echo:
 echo:
 echo                       BitCourse - Digital Neccessities
@@ -439,11 +437,10 @@ echo:
 echo                 [0] %_exitmsg%
 echo         ____________________________________________________________
 echo: 
-call :dk_color2 %_White% "             " %_Green% "Choose Option: [1,2,0]"
+echo                 Choose Option: [1,2,0]
 choice /C:1230 /N
 set _el=!errorlevel!
 if !_el!==4  exit /b
-if !_el!==3  start %mas%genuine-installation-media &goto :oh_menu
 if !_el!==2  goto :oh_uninstall
 if !_el!==1  goto :oh_menu2
 goto :oh_menu
@@ -765,9 +762,9 @@ call :oh_licrefresh
 echo:
 if not defined error (
 call :dk_color %Green% "Office is permanently activated."
-if defined ohub call :dk_color %Gray% "Office apps such as Word, Excel are activated, use them directly. Ignore 'Buy' button in Office dashboard app."
+if defined ohub echo Office apps such as Word, Excel are activated, use them directly. Ignore 'Buy' button in Office dashboard app.
 ) else (
-call :dk_color %Red% "Some errors were detected."
+echo Some errors were detected.
 if not defined ierror if not defined showfix call :dk_color %Blue% "%_fixmsg%"
 echo:
 set fixes=%fixes% %mas%troubleshoot
@@ -892,10 +889,10 @@ echo ___________________________________________________________________________
 echo:
 
 if not defined _present (
-echo Ohook activation is not installed.
+echo MS Office activation is not installed.
 ) else (
 if defined _unerror (
-call :dk_color %Red% "Failed to uninstall Ohook activation."
+echo Failed to uninstall MS Office activation.
 call :oh_checkapps
 if defined checknames (
 call :dk_color %Blue% "Close [!checknames!] and try again."
@@ -904,7 +901,7 @@ call :dk_color %Blue% "If it is still not fixed, reboot your machine using the r
 call :dk_color %Blue% "Reboot your machine using the restart option and try again."
 )
 ) else (
-call :dk_color %Green% "Successfully uninstalled Ohook activation."
+call :dk_color %Green% "Successfully uninstalled MS Office activation."
 )
 )
 echo __________________________________________________________________________________________
